@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Apintec xmlns="http://www.apintec.com/">
+  <IOCard Vendor="Adlink" Driver="IODask" CardType="6" Channels="16" Index="0">
+    <DI>
+      <DI0 bit="0" Function="CPU OK"></DI0>
+      <DI1 bit="1" Function="伺服使能输出"></DI1>
+      <DI2 bit="2" Function="警报输出"></DI2>
+      <DI3 bit="3" Function="自动模式输出"></DI3>
+      <DI4 bit="4" Function="已原点复归"></DI4>
+      <DI5 bit="5" Function="程序运行中"></DI5>
+      <DI6 bit="6" Function="复位状态输出"></DI6>
+      <DI7 bit="7" Function=""></DI7>
+      <DI8 bit="8" Function="正常拍照允许"></DI8>
+      <DI9 bit="9" Function="标定拍照允许"></DI9>
+      <DI10 bit="10" Function="标定完成"></DI10>
+      <DI11 bit="11" Function=""></DI11>
+      <DI12 bit="12" Function=""></DI12>
+      <DI13 bit="13" Function=""></DI13>
+      <DI14 bit="14" Function=""></DI14>
+      <DI15 bit="15" Function=""></DI15>
+    </DI>
+    <DO>
+      <DO0 bit="0" Function="伺服使能输出"></DO0>
+      <DO1 bit="1" Function="停止"></DO1>
+      <DO2 bit="2" Function="自动运行开始"></DO2>
+      <DO3 bit="3" Function="程序复位输入"></DO3>
+      <DO4 bit="4" Function=""></DO4>
+      <DO5 bit="5" Function="原点复位"></DO5>
+      <DO6 bit="6" Function="正常模式"></DO6>
+      <DO7 bit="7" Function="标定模式"></DO7>
+      <DO8 bit="8" Function="抓料启动"></DO8>
+      <DO9 bit="9" Function="正常拍照完成"></DO9>
+      <DO10 bit="10" Function="标定拍照完成"></DO10>
+      <DO11 bit="11" Function="标定开始"></DO11>
+      <DO12 bit="12" Function=""></DO12>
+      <DO13 bit="13" Function=""></DO13>
+      <DO14 bit="14" Function="自动模式输入"></DO14>
+      <DO15 bit="15" Function="手动模式输入"></DO15>
+    </DO>
+  </IOCard>
+</Apintec>

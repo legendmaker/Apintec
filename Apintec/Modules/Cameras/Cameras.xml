@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Apintec xmlns="http://www.apintec.com/">
+  <Camera>
+    <BaslerPylon Index="0" Sequence ="0"></BaslerPylon>
+    <!--<UEyeGigE Index="0" Sequence="1"></UEyeGigE>-->
+    <BaslerPylon Index="1" Sequence ="1"></BaslerPylon>
+  </Camera>
+</Apintec>
