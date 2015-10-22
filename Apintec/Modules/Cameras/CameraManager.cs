@@ -62,7 +62,7 @@ namespace Apintec.Modules.Cameras
                     {
                         Type type = Type.GetType(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Namespace
                             + "." + "Vendors" + "." + item.Vendor, true, true);
-                        item.Instance = (Activator.CreateInstance(type, item.Index)) as Camera;
+                        item.Instance = (Activator.CreateInstance(type)) as Camera;
                         item.IsInstance = true;
                         item.Instance.Sequence = -1;
                         if(!String.IsNullOrEmpty( item.Instance.IPAddress))

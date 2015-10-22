@@ -20,46 +20,8 @@ namespace Apintec.Modules.Cameras.Vendors
         private bool _isSnapShot = false;
         private const int BufferSize = 2;
         private List<Bitmap> _buffer = new List<Bitmap>();
-
-        public override uint Index
-        {
-            get
-            {
-                return base.Index;
-            }
-
-            set
-            {
-                uint _numDevices = Pylon.EnumerateDevices();
-
-                if (value < _numDevices)
-                {
-  //                  Close();
-                    _hDev = new PYLON_DEVICE_HANDLE();
-                    try
-                    {
-                        /* Get a handle for specific index.  */
-                        _hDev = Pylon.CreateDeviceByIndex(value);
-                        base.Index = value;
-                    }
-                    catch (Exception e)
-                    {
-                        throw new APXExeception(e.Message);
-                    }
-                    Pylon.DeviceOpen(_hDev, Pylon.cPylonAccessModeControl | Pylon.cPylonAccessModeStream);
-                    InitDeviceInfo();
-                    if (Pylon.DeviceIsOpen(_hDev))
-                    {
-                        Pylon.DeviceClose(_hDev);
-                    }
-                }
-                else
-                {
-                    throw new APXExeception(string.Format("Camera( total: {0}),  index({1}) out of range",
-                        _numDevices, value));
-                }
-            }
-        }
+        private static Queue<PYLON_DEVICE_HANDLE> _hDevQueue = new Queue<PYLON_DEVICE_HANDLE>();
+        private static uint _numDevices = 0;
 
         public override event EventHandler OnClose;
         public override event EventHandler OnOpen;
@@ -71,14 +33,39 @@ namespace Apintec.Modules.Cameras.Vendors
         static BaslerPylon()
         {
             Pylon.Initialize();
+            _numDevices = Pylon.EnumerateDevices();
+            if(_numDevices >0)
+            {
+                for (int i = 0; i < _numDevices; i++)
+                {
+                    _hDevQueue.Enqueue(Pylon.CreateDeviceByIndex(Convert.ToUInt32(i)));
+                }
+            }
         }
         public BaslerPylon() : base()
         {
-            
-        }
-        public BaslerPylon(uint index) : this()
-        {
-            Index = index;
+            try
+            {
+                /* Get a handle for specific index.  */
+                _hDev = _hDevQueue.Dequeue();
+            }
+            catch (Exception e)
+            {
+                throw new APXExeception(e.Message);
+            }
+            try
+            {
+                Pylon.DeviceOpen(_hDev, Pylon.cPylonAccessModeControl | Pylon.cPylonAccessModeStream);
+                InitDeviceInfo();
+                if (Pylon.DeviceIsOpen(_hDev))
+                {
+                    Pylon.DeviceClose(_hDev);
+                }
+            }
+            catch (Exception e)
+            {
+                throw new APXExeception(e.Message);
+            }
         }
 
         private void InitDeviceInfo()
@@ -194,7 +181,6 @@ namespace Apintec.Modules.Cameras.Vendors
                 /* Before using the device, it must be opened. Open it for configuring
                 parameters and for grabbing images. */
                 Pylon.DeviceOpen(_hDev, Pylon.cPylonAccessModeControl | Pylon.cPylonAccessModeStream);
-                InitDeviceInfo();
 
                 /* Set the pixel format to Mono8, where gray values will be output as 8 bit values for each pixel. */
                 /* ... Check first to see if the device supports the Mono8 format. */
