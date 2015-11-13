@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Apintec.Modules
 {
-    public interface IHardware:IDisposable
+    public interface IHardware : IDisposable 
     {
         bool Open();
         bool Close();

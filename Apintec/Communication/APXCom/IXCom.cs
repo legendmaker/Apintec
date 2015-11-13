@@ -8,10 +8,11 @@ namespace Apintec.Communiction.APXCom
 {
     public interface IXCom
     {
+        bool IsConnected { get; }
         bool Connect();
         bool Disconnect();
         bool Send(byte[] buffer, int offset, int count);
-        int Receive(byte[] buffer, int offset, int count);
+        int Receive(ref byte[] buffer, int offset, int count);
 
         event EventHandler OnConnect;
         event EventHandler OnDisconnect;

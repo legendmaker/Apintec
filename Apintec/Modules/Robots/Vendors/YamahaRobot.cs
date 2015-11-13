@@ -122,7 +122,7 @@ namespace Apintec.Modules.Robots.Vendors
             {
                 try
                 {
-                    ComModule.Receive(readBuff, 0, rByte);
+                    ComModule.Receive(ref readBuff, 0, rByte);
                     lock(buffer)
                     {
                         buffer = Gadget.ArrayAppend<byte>(buffer, readBuff);

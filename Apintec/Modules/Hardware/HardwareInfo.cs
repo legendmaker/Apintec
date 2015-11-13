@@ -8,10 +8,21 @@ namespace Apintec.Modules
 {
     public class HardwareInfo
     {
-        public virtual string Name { get; protected set; }
-        public virtual string Vendor { get; protected set; }
-        public virtual string Module { get; protected set; }
-        public virtual string DeviceID { get; protected set; }
-        public virtual bool IsOpen { get; protected set; }
+        public virtual string Name { get;  set; }
+        public virtual string Vendor { get;  set; }
+        public virtual string Module { get;  set; }
+        public virtual string DeviceID { get;  set; }
+        public virtual bool IsOpen { get;  set; }
+        public HardwareInfo()
+        {
+            IsOpen = false;
+        }
+        public HardwareInfo(string name, string vendor, string module, string deviceID):this()
+        {
+            Name = name;
+            Vendor = vendor;
+            Module = module;
+            DeviceID = deviceID;
+        }
     }
 }

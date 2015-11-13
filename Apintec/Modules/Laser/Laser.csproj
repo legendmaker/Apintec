@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{AA51214C-C381-4572-A671-E219656B165E}</ProjectGuid>
+    <ProjectGuid>{AA7847BA-4606-48EE-B2E3-11A9CEAEA20E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Apintec.Communiction.APXCom</RootNamespace>
-    <AssemblyName>APXCom</AssemblyName>
+    <RootNamespace>Apintec.Modules.Laser</RootNamespace>
+    <AssemblyName>Laser</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -20,7 +20,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -59,31 +58,34 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Instances\Net\NetKey.cs" />
-    <Compile Include="Instances\Net\NetParameter.cs" />
-    <Compile Include="Instances\Net\NetPoint.cs" />
-    <Compile Include="Instances\Net\XTcpClient.cs" />
-    <Compile Include="Instances\Net\XUdpClient.cs" />
-    <Compile Include="Instances\Serial\SerialKey.cs" />
-    <Compile Include="Instances\Serial\XSerialParameter.cs" />
-    <Compile Include="Instances\Serial\XSerialPort.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="IXCom.cs" />
+    <Compile Include="ILaser.cs" />
+    <Compile Include="Laser.cs" />
+    <Compile Include="LaserCommand.cs" />
+    <Compile Include="LaserInfo.cs" />
+    <Compile Include="LaserInstanceInfo.cs" />
+    <Compile Include="LaserManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="XCom.cs" />
-    <Compile Include="XComEventArgs.cs" />
-    <Compile Include="XComInfo.cs" />
-    <Compile Include="XComInstanceInfo.cs" />
-    <Compile Include="XComManager.cs" />
+    <Compile Include="Protocol\LaserProtocol.cs" />
+    <Compile Include="Protocol\LaserProtocolEventArgs.cs" />
+    <Compile Include="Protocol\LaserProtocolMessageAck.cs" />
+    <Compile Include="Protocol\LaserProtocolMessageType.cs" />
+    <Compile Include="Protocol\LaserProtocolType.cs" />
+    <Compile Include="Vendors\Hanslaser.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Communication\APXCom\APXCom.csproj">
+      <Project>{aa51214c-c381-4572-a671-e219656b165e}</Project>
+      <Name>APXCom</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Core\APCoreLib\APCoreLib.csproj">
       <Project>{1997c8ec-e56c-499b-9ef9-18db1d664d16}</Project>
       <Name>APCoreLib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Hardware\Hardware.csproj">
+      <Project>{8ee96417-f68e-419b-b568-68ad34874617}</Project>
+      <Name>Hardware</Name>
+    </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

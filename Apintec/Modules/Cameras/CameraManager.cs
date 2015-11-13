@@ -19,17 +19,17 @@ namespace Apintec.Modules.Cameras
             get { return _cameraCfg; }
             protected set { _cameraCfg = value; }
         }
-        private const string IOCardCfgFile = "Cameras.xml";
+        private const string CamerasCfgFile = "Cameras.xml";
         public List<CameraInstanceInfo> Cameras { get; protected set; }
 
         public CameraManager()
         {
-            if (!File.Exists(IOCardCfgFile))
+            if (!File.Exists(CamerasCfgFile))
             {
                 try
                 {
                     CameraCfg = new APXDoc();
-                    CameraCfg.Create(IOCardCfgFile);
+                    CameraCfg.Create(CamerasCfgFile);
                     CameraCfg.Save();
                 }
                 catch (Exception e)
@@ -39,7 +39,7 @@ namespace Apintec.Modules.Cameras
             }
             else
             {
-                CameraCfg = new APXDoc(IOCardCfgFile);
+                CameraCfg = new APXDoc(CamerasCfgFile);
             }
             Cameras = new List<CameraInstanceInfo>();
             try
@@ -96,7 +96,6 @@ namespace Apintec.Modules.Cameras
                 return false;
             try
             {
-                // var queryIOCard = CameraCfg.Doc.Descendants(CameraCfg.NameSpace + "Camera").Descendants().Attributes().Select(n => new { n.Name, n.Value });
                 var queryVendor = CameraCfg.Doc.Descendants(CameraCfg.NameSpace + "Camera").Descendants().Select(n=>new { n.Name,n});
                 foreach (var item in queryVendor)
                 {

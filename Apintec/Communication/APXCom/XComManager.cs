@@ -1,35 +1,29 @@
-﻿using Apintec.Communiction.APXCom.Instances;
+﻿using Apintec.Communiction.APXCom.Instances.Net;
+using Apintec.Communiction.APXCom.Instances.Serial;
 using Apintec.Core.APCoreLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Ports;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 
 namespace Apintec.Communiction.APXCom
 {
     public class XComManager
     {
+        private static APXDoc _xComCfg;
 
-        public string Driver { get; protected set; }
-
-        private APXDoc _xComCfg;
-
-        public APXDoc XComCfg
+        public static APXDoc XComCfg
         {
             get { return _xComCfg; }
             protected set { _xComCfg = value; }
         }
         private const string IOCardCfgFile = "XCom.xml";
-        public IXCom ComModule { get; protected set; }
 
-        public XSerialParameter SerialPara { get; protected set; }
-
-
-        public XComManager()
+        private static List<XComInfo> _xComInfo;
+        public static Dictionary<string,XComInstanceInfo> XComsDict { get; protected set; }
+        static XComManager()
         {
             if (!File.Exists(IOCardCfgFile))
             {
@@ -47,81 +41,125 @@ namespace Apintec.Communiction.APXCom
             else
             {
                 XComCfg = new APXDoc(IOCardCfgFile);
+                _xComInfo = new List<XComInfo>();
+                XComsDict = new Dictionary<string, XComInstanceInfo>();
             }
             Load();
-
+            ReinInstance();
         }
-        private bool Load()
+        private static void ReinInstance()
+        {
+            string xcomSubClass="";
+            string key = "";
+            foreach (var item in _xComInfo)
+            {
+                try
+                {
+                    if (item.Type == "XSerialPort")
+                    {
+                        xcomSubClass = "Serial";
+                        key = SerialKey.BuildSerialKey(item.Key, item.Parameter as XSerialParameter);
+                    }
+                    else if ((item.Type == "XUdpClient") || (item.Type == "XTcpClient")) 
+                    {
+                        xcomSubClass = "Net";
+                        key = NetKey.BuildNetKey(item.Key, item.Parameter as NetParameter);
+                    }
+                    Type type = Type.GetType(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Namespace
+                        + "." + "Instances" + "." + xcomSubClass + "." + item.Type, true, true);
+                    XComsDict.Add(key, new XComInstanceInfo(item, type));
+                }
+                catch (Exception e)
+                {
+                    APXlog.Write(APXlog.BuildLogMsg(e.ToString()));
+                }
+            }
+        }
+
+        private static bool Load()
         {
             if (XComCfg == null)
                 return false;
             try
             {
-                var queryIOCard = XComCfg.Doc.Descendants(XComCfg.NameSpace + "XCom").Attributes().Select(n => new { n.Name, n.Value });
-                foreach (var item in queryIOCard)
+                var queryVendor = XComCfg.Doc.Descendants(XComCfg.NameSpace + "XCom").Descendants().Select(n => new { n.Name, n });
+                foreach (var item in queryVendor)
                 {
-                    switch (item.Name.LocalName)
+                    XComInfo xComInfo = new XComInfo();
+                    xComInfo.Type = item.Name.LocalName;
+                    if (xComInfo.Type == "XSerialPort")
                     {
-                        case "Driver":
-                            Driver = item.Value;
-                            break;
-                        default:
-                            break;
-                    }
-                }
-                if(Driver == "XSerialPort")
-                {
-                    SerialPara = new XSerialParameter();
-                    foreach (var item in queryIOCard)
-                    {
-                        switch (item.Name.LocalName)
+                        XSerialParameter para = new XSerialParameter();
+                        for (XAttribute attr = item.n.FirstAttribute; attr != null; attr = attr.NextAttribute)
                         {
-                            case "PortName":
-                                SerialPara.PortName = item.Value;
-                                break;
-                            case "Baudrate":
-                                SerialPara.Baudrate = int.Parse(item.Value);
-                                break;
-                            case "Parity":
-                                SerialPara.Parity = (Parity)Enum.Parse(typeof(Parity), item.Value);
-                                break;
-                            case "DataBits":
-                                SerialPara.DataBits = int.Parse(item.Value);
-                                break;
-                            case "StopBits":
-                                SerialPara.StopBits = (StopBits)Enum.Parse(typeof(StopBits), item.Value);
-                                break;
-                            case "Handshake":
-                                SerialPara.Handshake = (Handshake)Enum.Parse(typeof(Handshake), item.Value);
-                                break;
-                            default:
-                                break;
+                            switch (attr.Name.LocalName)
+                            {
+                                case "PortName":
+                                    para.PortName = attr.Value;
+                                    break;
+                                case "Baudrate":
+                                    para.Baudrate = int.Parse(attr.Value);
+                                    break;
+                                case "Parity":
+                                    para.Parity = (Parity)Enum.Parse(typeof(Parity), attr.Value);
+                                    break;
+                                case "DataBits":
+                                    para.DataBits = int.Parse(attr.Value);
+                                    break;
+                                case "StopBits":
+                                    para.StopBits = (StopBits)Enum.Parse(typeof(StopBits), attr.Value);
+                                    break;
+                                case "Handshake":
+                                    para.Handshake = (Handshake)Enum.Parse(typeof(Handshake), attr.Value);
+                                    break;
+                                case "Key":
+                                    xComInfo.Key = attr.Value;
+                                    break;
+                                default:
+                                    break;
+                            }
                         }
+                        xComInfo.Parameter = para;
                     }
-                    try
+                    else if((xComInfo.Type == "XUdpClient") || (xComInfo.Type == "XTcpClient"))
                     {
-                        Type type = Type.GetType(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Namespace
-                            + "." + "Instances" + "." + Driver, true, true);
-                        ComModule = (Activator.CreateInstance(type, SerialPara)) as IXCom;
+                        NetParameter para = new NetParameter();
+                        for (XAttribute attr = item.n.FirstAttribute; attr != null; attr = attr.NextAttribute)
+                        {
+                            switch (attr.Name.LocalName)
+                            {
+                                case "ServerIP":
+                                    para.ServerIp = attr.Value;
+                                    break;
+                                case "ServerPort":
+                                    para.ServerPort = int.Parse(attr.Value);
+                                    break;
+                                case "Timeout":
+                                    para.Timeout = int.Parse(attr.Value);
+                                    break;
+                                case "LocalEthIndex":
+                                    para.LocalEthIndex = int.Parse(attr.Value);
+                                    break;
+                                case "LocalPort":
+                                    para.LocalPort = int.Parse(attr.Value);
+                                    break;
+                                case "Key":
+                                    xComInfo.Key = attr.Value;
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                        xComInfo.Parameter = para;
                     }
-                    catch (Exception e)
-                    {
-                        throw new APXExeception(e.ToString());
-                    }
-                    return true;
+                    _xComInfo.Add(xComInfo);
                 }
             }
-            catch (Exception e)
+            catch(Exception e)
             {
-                throw new APXExeception(e.ToString());
+                throw new APXExeception(e.Message);
             }
-
             return true;
-        }
-      
-        public void Dispose()
-        {
-            ComModule.Disconnect();
         }
     }
 }

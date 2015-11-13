@@ -1,5 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<Apintec xmlns="http://www.apintec.com/">
-  <XCom Driver="XSerialPort" PortName="COM1" Baudrate="9600" Parity="Odd" DataBits="8" StopBits="1" Handshake="None">  
-  </XCom>
-</Apintec>

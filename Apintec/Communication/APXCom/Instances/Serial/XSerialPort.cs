@@ -6,10 +6,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Apintec.Communiction.APXCom.Instances
+namespace Apintec.Communiction.APXCom.Instances.Serial
 {
     public class XSerialPort : SerialPort, IXCom
     {
+        private bool _isConnected;
+        public bool IsConnected
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         public event EventHandler OnConnect;
         public event EventHandler OnDisconnect;
         public event EventHandler OnReceive;
@@ -41,6 +50,7 @@ namespace Apintec.Communiction.APXCom.Instances
             {
                 Open();
                 RaiseOnConnectEvent();
+                _isConnected = true;
                 return true;
             }
             catch(Exception e)
@@ -55,6 +65,7 @@ namespace Apintec.Communiction.APXCom.Instances
             {
                 Close();
                 RaiseOnDisconnectEvent();
+                _isConnected = false;
                 return true;
             }
             catch(Exception e)
@@ -63,13 +74,12 @@ namespace Apintec.Communiction.APXCom.Instances
             }
         }
 
-        public int Receive(byte[] buffer, int offset, int count)
+        public int Receive(ref byte[] buffer, int offset, int count)
         {
             int nByte;
             try
             {
                 nByte = Read(buffer, offset, count);
-               
                 return nByte;
             }
             catch (Exception e)

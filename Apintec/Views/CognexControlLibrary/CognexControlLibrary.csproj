@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{AA51214C-C381-4572-A671-E219656B165E}</ProjectGuid>
+    <ProjectGuid>{9C641795-10E5-4C72-8CE2-AD549B5F8E48}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Apintec.Communiction.APXCom</RootNamespace>
-    <AssemblyName>APXCom</AssemblyName>
+    <RootNamespace>Apintec.views.CognexControlLibrary</RootNamespace>
+    <AssemblyName>CognexControlLibrary</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -20,7 +20,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -49,41 +48,47 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Cognex.InSight, Version=5.1.172.1, Culture=neutral, PublicKeyToken=6b9774afddb09935, processorArchitecture=x86" />
+    <Reference Include="Cognex.InSight.Controls.Display, Version=5.1.172.1, Culture=neutral, PublicKeyToken=6b9774afddb09935, processorArchitecture=x86" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Instances\Net\NetKey.cs" />
-    <Compile Include="Instances\Net\NetParameter.cs" />
-    <Compile Include="Instances\Net\NetPoint.cs" />
-    <Compile Include="Instances\Net\XTcpClient.cs" />
-    <Compile Include="Instances\Net\XUdpClient.cs" />
-    <Compile Include="Instances\Serial\SerialKey.cs" />
-    <Compile Include="Instances\Serial\XSerialParameter.cs" />
-    <Compile Include="Instances\Serial\XSerialPort.cs">
-      <SubType>Component</SubType>
+    <Compile Include="CognexClientInfo.cs" />
+    <Compile Include="CognexManager.cs" />
+    <Compile Include="CognexMessageArgs.cs" />
+    <Compile Include="CognexPanel.cs">
+      <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="IXCom.cs" />
+    <Compile Include="CognexPanel.Designer.cs">
+      <DependentUpon>CognexPanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="XCom.cs" />
-    <Compile Include="XComEventArgs.cs" />
-    <Compile Include="XComInfo.cs" />
-    <Compile Include="XComInstanceInfo.cs" />
-    <Compile Include="XComManager.cs" />
+    <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="CognexPanel.resx">
+      <DependentUpon>CognexPanel.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Communication\APXCom\APXCom.csproj">
+      <Project>{aa51214c-c381-4572-a671-e219656b165e}</Project>
+      <Name>APXCom</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Core\APCoreLib\APCoreLib.csproj">
       <Project>{1997c8ec-e56c-499b-9ef9-18db1d664d16}</Project>
       <Name>APCoreLib</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
